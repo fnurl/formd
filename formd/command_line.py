@@ -1,14 +1,17 @@
-#!/usr/bin/env python
-# encoding=utf8
+# coding=utf8
+"""Command line script for running formd.
+
+Author: Seth Brown
+Date: 30 Mar 2013
 """
-Seth Brown
-30 Mar 2013
-"""
+
 import sys
 import argparse
-from src import ForMd
+from formd import ForMd
+
 
 def main():
+    """Command line options."""
     description = 'formd: A (for)matting (M)ark(d)own tool.'
     p = argparse.ArgumentParser(description=description)
     p.add_argument('-r', '--ref', help='convert text to referenced Markdown',

@@ -1,12 +1,9 @@
-#!/usr/bin/env python
-# -*- encoding: utf-8 -*-
-"""
-Author: Seth Brown
-Description: description
-"""
-from src import formd
-from distutils.core import setup
+"""Setup file for formd using setuptools.
 
+Contributed by @fnurl
+"""
+from setuptools import setup
+from src import formd
 setup(
     name='formd',
     version=formd.__version__,
@@ -15,7 +12,9 @@ setup(
     author_email='sethbrown@drbunsen.org',
     url='http://drbunsen.github.com/formd/',
     packages=['', ],
-    scripts=['src/formd.py', ],
+    entry_points={
+        'console_scripts': ['formd=formd.command_line:main'],
+    },
     requires=['markdown (>=2.0)', ],
     license='MIT',
     long_description=open('README.md').read(),

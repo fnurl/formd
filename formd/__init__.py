@@ -1,3 +1,4 @@
+"""Version and exposed classes/functions."""
 from formd import ForMd
 
 __version__ = '1.0.0'

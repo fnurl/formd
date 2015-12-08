@@ -1,20 +1,25 @@
 #!/usr/bin/env python
-# encoding=utf8
+# coding=utf8
+"""formd is a tool for conversion between inline and referenced markdown style.
+
+formd is a tool for (for)matting (M)ark(d)own that allows rapid conversion
+between the two styles of Markdown links and images--inline and referenced.
+
+Author: Seth Brown
+Date: 2012-02-24
 """
-Seth Brown
-02-24-12
-"""
+
 from sys import stdin, stdout
 import argparse
 import re
 from collections import OrderedDict
-__version__ = '1.0.0'
-__all__ = ['ForMd']
 
 
 class ForMd(object):
-    """ Format Markdown text"""
+    """Format Markdown text."""
+
     def __init__(self, text):
+        """Initialize ForMd object."""
         super(ForMd, self).__init__()
         self.text = text
         self.match_links = re.compile(r"""(\[[^^\[\]:]*?\])\s?? # text
@@ -25,27 +30,27 @@ class ForMd(object):
         self.data = []
 
     def _links(self):
-        """ Find Markdown links"""
+        """Find Markdown links."""
         links = re.findall(self.match_links, self.text)
-        for (text, ref)  in links:
+        for (text, ref) in links:
             ref = ref.replace('\n', '').replace('\r', '')
             yield (text, ref)
 
     def _refs(self):
-        """ Find Markdown references"""
+        """Find Markdown references."""
         refs = re.findall(self.match_refs, self.text)
         refs = sorted([_.lstrip().replace('\n', '').replace('\r', '')
-                for _ in refs])
+                      for _ in refs])
         refs = OrderedDict(i.split(":", 1) for i in refs)
         return refs
 
     def _format(self):
-        """ Process text"""
+        """Process text."""
         links = (i for i in self._links())
         refs = self._refs()
         for n, link in enumerate(links):
             text, ref = link
-            ref_num = ''.join(("[",str(n+1),"]: "))
+            ref_num = ''.join(("[", str(n+1), "]: "))
             if ref in refs.keys():
                 url = refs.get(ref).strip()
                 formd_ref = ''.join((ref_num, url))
@@ -60,20 +65,23 @@ class ForMd(object):
                 # remove the leading/training parens
                 parse_ref = ref[1:-1]
                 formd_ref = ''.join((ref_num, parse_ref))
-                formd_text = ''.join((text,ref_num))
+                formd_text = ''.join((text, ref_num))
                 self.data.append([formd_text, formd_ref])
 
     def inline_md(self):
-        """ Generate inline Markdown"""
+        """Generate inline Markdown."""
         self._format()
-        text_link = iter([''.join((_[0].split("][", 1)[0],
-            "](", _[1].split(":", 1)[1].strip(), ")")) for _ in self.data])
+        text_link = iter([''.join((_[0].split(
+                            "][", 1)[0],
+                            "](",
+                            _[1].split(":", 1)[1].strip(), ")")
+                        ) for _ in self.data])
         formd_text = self.match_links.sub(lambda _: next(text_link), self.text)
         formd_md = self.match_refs.sub('', formd_text).strip()
         yield formd_md
 
     def ref_md(self):
-        """ Generate referenced Markdown"""
+        """Generate referenced Markdown."""
         self._format()
         ref_nums = iter([_[0].rstrip(" :") for _ in self.data])
         formd_text = self.match_links.sub(lambda _: next(ref_nums), self.text)
@@ -84,7 +92,7 @@ class ForMd(object):
         yield formd_md
 
     def flip(self):
-        """ Convert Markdown to the opposite style of the first text link"""
+        """Convert Markdown to the opposite style of the first text link."""
         try:
             first_match = re.search(self.match_links, self.text).group(0)
             if first_match is None or first_match == []:
@@ -96,26 +104,3 @@ class ForMd(object):
         except AttributeError:
             formd_md = self.text
         return formd_md
-
-
-def main():
-    description = 'formd: A (for)matting (M)ark(d)own tool.'
-    p = argparse.ArgumentParser(description=description)
-    p.add_argument('-r', '--ref', help="convert text to referenced Markdown",
-                   action='store_true', default=False)
-    p.add_argument('-i', '--inline', help="convert text to inline Markdown",
-                   action='store_true', default=False)
-    p.add_argument('-f', '--flip', help="convert to opposite style Markdown",
-                   action='store_true', default=True)
-    args = p.parse_args()
-    md = stdin.read()
-    text = ForMd(md)
-    if (args.inline):
-        [stdout.write(t) for t in text.inline_md()]
-    elif (args.ref):
-        [stdout.write(t) for t in text.ref_md()]
-    elif (args.flip):
-        [stdout.write(t) for t in text.flip()]
-
-if __name__ == '__main__':
-    main()
