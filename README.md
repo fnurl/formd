@@ -7,3 +7,7 @@ Download/clone the repository, then
 
     cd formd
     pip install .
+
+## Running
+
+	
