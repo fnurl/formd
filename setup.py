@@ -3,15 +3,15 @@
 Contributed by @fnurl
 """
 from setuptools import setup
-from src import formd
+
 setup(
     name='formd',
-    version=formd.__version__,
+    version='1.0.0',
     description='A Markdown formatting tool',
     author='Seth Brown',
     author_email='sethbrown@drbunsen.org',
     url='http://drbunsen.github.com/formd/',
-    packages=['', ],
+    packages=['formd', ],
     entry_points={
         'console_scripts': ['formd=formd.command_line:main'],
     },

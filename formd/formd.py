@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding=utf8
 """formd is a tool for conversion between inline and referenced markdown style.
 
@@ -8,11 +7,10 @@ between the two styles of Markdown links and images--inline and referenced.
 Author: Seth Brown
 Date: 2012-02-24
 """
-
 from sys import stdin, stdout
+from collections import OrderedDict
 import argparse
 import re
-from collections import OrderedDict
 
 
 class ForMd(object):

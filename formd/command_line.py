@@ -7,7 +7,7 @@ Date: 30 Mar 2013
 
 import sys
 import argparse
-from formd import ForMd
+import formd
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
                    action='store_true', default=True)
     args = p.parse_args()
     md = sys.stdin.read()
-    f = ForMd(md)
+    f = formd.ForMd(md)
     if (args.inline):
         [sys.stdout.write(t) for t in f.inline_md()]
     elif (args.ref):
